@@ -58,7 +58,7 @@ pub enum ErrorStatus {
     WouldBlock = 0x1F,
     /// A bi-directional Connection closed from a side and not the other
     ConnectionClosed = 0x20,
-    /// Attempt to form a Connection failed
+    /// Attempt to form a Connection failed; eg. UDP Socket's port is unreachable.
     ConnectionRefused = 0x21,
     /// There is a resource associated with the given ID but it isn't supported by that operation
     UnsupportedResource = 0x22,
@@ -80,11 +80,16 @@ pub enum ErrorStatus {
     AddressAlreadyInUse = 0x29,
     /// Attempt to use an interface thats not bound to an address.
     NotBound = 0x2A,
+    /// Failed to reach the target host
+    HostUnreachable = 0x2B,
+    /// Network is unreachable
+    NetworkUnreachable = 0x2C,
+    ProtocolNotSupported = 0x2D,
 }
 
 impl ErrorStatus {
     // update when a new error is added
-    const MAX: u16 = Self::NotBound as u16;
+    const MAX: u16 = Self::ProtocolNotSupported as u16;
 
     #[inline(always)]
     /// Gives a string description of the error
@@ -133,6 +138,9 @@ impl ErrorStatus {
             ForceTerminated => "Operation Terminated",
             AddressAlreadyInUse => "Address Already In Use",
             NotBound => "Interface Not Bound",
+            HostUnreachable => "Host Unreachable",
+            NetworkUnreachable => "Network Unreachable",
+            ProtocolNotSupported => "Protocol Not Supported",
         }
     }
 
