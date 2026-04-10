@@ -21,6 +21,7 @@ pub struct RawMemMapConfig {
 pub struct MemMapFlags(u8);
 
 impl MemMapFlags {
+    pub const NONE: Self = Self(0);
     /// The given address is a just a hint unless specified with this flag
     pub const FIXED: Self = Self(1 << 0);
     /// Allows the memory to be written to, makes it RW, by default it is only R
@@ -32,12 +33,16 @@ impl MemMapFlags {
 }
 
 impl MemMapFlags {
-    pub fn from_bits_retaining(bits: u8) -> Self {
+    pub const fn from_bits(bits: u8) -> Self {
         Self(bits)
     }
 
-    pub fn contains(self, other: MemMapFlags) -> bool {
-        (self & other) == other
+    pub const fn to_bits(self) -> u8 {
+        self.0
+    }
+
+    pub const fn contains(self, other: MemMapFlags) -> bool {
+        (self.0 & other.0) == other.0
     }
 }
 
@@ -61,13 +66,16 @@ impl BitAnd for MemMapFlags {
 pub struct ShmFlags(u32);
 
 impl ShmFlags {
-    /// The opened Resource's lifetime is bound by the Current Thread and not the Process
-    pub const LOCAL: Self = Self(1 << 0);
+    pub const NONE: Self = Self(0);
 }
 
 impl ShmFlags {
-    pub const fn from_bits_retaining(bits: u32) -> Self {
+    pub const fn from_bits(bits: u32) -> Self {
         Self(bits)
+    }
+
+    pub const fn to_bits(self) -> u32 {
+        self.0
     }
 
     pub const fn contains(self, other: Self) -> bool {

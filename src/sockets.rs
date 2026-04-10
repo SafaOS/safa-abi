@@ -18,6 +18,7 @@ pub unsafe trait ToSocketAddr {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 #[repr(C)]
 /// A Socket Address
 ///
@@ -44,6 +45,7 @@ impl SocketAddr {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 #[repr(C)]
 /// A local family socket address, converted from [SocketAddr]
 pub struct LocalSocketAddr {
@@ -143,6 +145,15 @@ impl SockDomain {
     pub const LOCAL: Self = Self(0);
     /// The Internet Domain, IPv4
     pub const INETV4: Self = Self(1);
+    /// Unknown Domain.
+    pub const UNKNOWN: Self = Self(u8::MAX);
+
+    pub const fn to_bits(self) -> u8 {
+        self.0
+    }
+    pub const fn from_bits(bits: u8) -> Self {
+        Self(bits)
+    }
 }
 
 /// Flags given to [`crate::syscalls::SyscallTable::SysSockCreate`],
@@ -152,6 +163,7 @@ impl SockDomain {
 pub struct SockCreateKind(u16);
 
 impl SockCreateKind {
+    pub const UNKNOWN: Self = Self(u16::MAX);
     /// A stream socket, only allowed for local domain sockets.
     pub const SOCK_STREAM: Self = Self(0);
     /// A SeqPacket Socket, unlike Stream Sockets which are the default for local sockets, this preserves messages boundaries
@@ -168,8 +180,21 @@ impl SockCreateKind {
         (self.0 & other.0) == other.0
     }
 
-    pub const fn from_bits_retaining(bits: u16) -> Self {
+    pub const fn from_bits(bits: u16) -> Self {
         Self(bits)
+    }
+
+    pub const fn to_bits(self) -> u16 {
+        self.0
+    }
+
+    pub const fn is_blocking(&self) -> bool {
+        !self.contains(SockCreateKind::SOCK_NON_BLOCKING)
+    }
+
+    /// Removes all the socket kind flag from this, allowing for thing such as matchs.
+    pub const fn strip_flags(self) -> Self {
+        Self(self.0 & !Self::SOCK_NON_BLOCKING.0)
     }
 }
 
@@ -197,11 +222,11 @@ impl SockMsgFlags {
         (self.0 & other.0) == other.0
     }
 
-    pub const fn from_bits_retaining(bits: u32) -> Self {
+    pub const fn from_bits(bits: u32) -> Self {
         Self(bits)
     }
 
-    pub const fn into_bits(self) -> u32 {
+    pub const fn to_bits(self) -> u32 {
         self.0
     }
 }
