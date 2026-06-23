@@ -30,6 +30,9 @@ impl MemMapFlags {
     pub const DISABLE_EXEC: Self = Self(1 << 2);
     /// The given Resource ID is a valid resource to map, by default the given resource ID is ignored and the memory is treated as not associated with anything
     pub const MAP_RESOURCE: Self = Self(1 << 3);
+    /// By default the kernel will lazy allocate requested memory.
+    /// If this flag is set the kernel will imeddiately allocate memory.
+    pub const POPULATE: Self = Self(1 << 4);
 }
 
 impl MemMapFlags {
