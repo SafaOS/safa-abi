@@ -41,7 +41,7 @@ impl MemMapFlags {
         self.0
     }
 
-    pub const fn contains(self, other: MemMapFlags) -> bool {
+    pub const fn contains(self, other: Self) -> bool {
         (self.0 & other.0) == other.0
     }
 }
@@ -54,6 +54,49 @@ impl BitOr for MemMapFlags {
 }
 
 impl BitAnd for MemMapFlags {
+    type Output = Self;
+    fn bitand(self, rhs: Self) -> Self::Output {
+        Self(self.0 & rhs.0)
+    }
+}
+
+/// Flags passed to [`crate::syscalls::SyscallTable::SysMemProtect`]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct MemFlags(u8);
+
+impl MemFlags {
+    pub const NONE: Self = Self(0);
+    /// Allows the memory to be written to, makes it W.
+    pub const WRITE: Self = Self(1 << 0);
+    /// Allows the memory to be read from, makes it R.
+    pub const READ: Self = Self(1 << 1);
+    /// Allows the memory to be executed
+    pub const EXEC: Self = Self(1 << 2);
+}
+
+impl MemFlags {
+    pub const fn from_bits(bits: u8) -> Self {
+        Self(bits)
+    }
+
+    pub const fn to_bits(self) -> u8 {
+        self.0
+    }
+
+    pub const fn contains(self, other: Self) -> bool {
+        (self.0 & other.0) == other.0
+    }
+}
+
+impl BitOr for MemFlags {
+    type Output = Self;
+    fn bitor(self, rhs: Self) -> Self::Output {
+        Self(self.0 | rhs.0)
+    }
+}
+
+impl BitAnd for MemFlags {
     type Output = Self;
     fn bitand(self, rhs: Self) -> Self::Output {
         Self(self.0 & rhs.0)

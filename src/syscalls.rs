@@ -121,6 +121,12 @@ pub enum SyscallTable {
     /// - [crate::mem::MemMapFlags::WRITE]
     /// - [crate::mem::MemMapFlags::DISABLE_EXEC]
     SysMemMap = 36,
+    /// Changes premissons and flags of a given user allocated area of memory.
+    ///
+    /// Like [`SyscallTable::SysMemMap`] and friends of memory syscalls, this syscall takes in a Resources that describes and points to the memory map.
+    ///
+    /// And flags [`crate::mem::MemFlags`] to use as the new flags of memory protection.
+    SysMemProtect = 48,
     /// Create a Shared Memory Descriptor, returning a key that points to it,
     /// The life time of that descriptor is bound to the calling process or the thread if a flag was specified.
     ///
@@ -166,7 +172,7 @@ pub enum SyscallTable {
 
 // sadly we cannot use any proc macros here because this crate is used by the libstd port and more, they don't happen to like proc macros...
 /// When a new syscall is added, add to this number, and use the old value as the syscall number
-const NEXT_SYSCALL_NUM: u16 = 48;
+const NEXT_SYSCALL_NUM: u16 = 49;
 
 impl TryFrom<u16> for SyscallTable {
     type Error = ();
