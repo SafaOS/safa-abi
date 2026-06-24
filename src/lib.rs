@@ -3,6 +3,7 @@
 #[cfg(not(any(target_os = "safaos", target_os = "none")))]
 compile_error!("abi should only be used for SafaOS or freestanding targets");
 
+pub mod clock;
 pub mod errors;
 pub mod ffi;
 pub mod fs;

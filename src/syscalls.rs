@@ -168,11 +168,22 @@ pub enum SyscallTable {
     /// Allocates a single new pair of Mother VTTY interface and a child VTTY Interface.
     /// TODO: Write VTTY docs.
     SysVTTYAlloc = 44,
+    /// Gets the [`crate::clock::CDuration`] that has passed from a given [`crate::clock::Clock`].
+    SysClockGetTime = 49,
+    /// Gets the frequency of the counter hardware timer such as TSC in x86_64 or just the value of CNTFRQ_EL0 in aarch64.
+    /// May not be implemented or deprecated in that case synchorization must be performed manually using [`SyscallTable::SysClockGetTime`].
+    SysClockGetCntFreq = 50,
+    /// Same declaration as [`SysClockGetTime`] but this gets the precision of a given clock.
+    SysClockGetRes = 51,
+    /// Sets the time of the given clock for the purposes of Synchorization from within the userspace.
+    ///
+    /// Privileges are required to use this syscall.
+    SysClockSetTime = 52,
 }
 
 // sadly we cannot use any proc macros here because this crate is used by the libstd port and more, they don't happen to like proc macros...
 /// When a new syscall is added, add to this number, and use the old value as the syscall number
-const NEXT_SYSCALL_NUM: u16 = 49;
+const NEXT_SYSCALL_NUM: u16 = 53;
 
 impl TryFrom<u16> for SyscallTable {
     type Error = ();
