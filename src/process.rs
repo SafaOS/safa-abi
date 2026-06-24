@@ -8,10 +8,9 @@ use crate::ffi::ptr::FFINonNull;
 use crate::ffi::slice::Slice;
 use crate::ffi::str::Str;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
 /// ABI structures are structures that are passed to processes by the parent process
-/// for now only stdio file descriptors are passed
 /// you get a pointer to them in the `r8` register at _start (the 5th argument)
 pub struct AbiStructures {
     pub stdio: ProcessStdio,
@@ -19,16 +18,17 @@ pub struct AbiStructures {
     pub parent_process_pid: u32,
     /// The number of available CPUs for this process (currently the number of available CPUs in the system)
     pub available_cpus: u32,
-}
-
-impl AbiStructures {
-    pub fn new(stdio: ProcessStdio, parent_pid: u32, available_cpus: u32) -> Self {
-        Self {
-            available_cpus,
-            stdio,
-            parent_process_pid: parent_pid,
-        }
-    }
+    // Program Interpreter fields.
+    /// The entry point of the program.
+    pub at_entry: usize,
+    /// Program headers for program.
+    pub at_phdr: usize,
+    /// Size of a program header entry.
+    pub at_phent: usize,
+    /// Number of program headers.
+    pub at_phnum: usize,
+    /// Base address of interpreter.
+    pub at_base: usize,
 }
 
 // Resources are actually 32-bit now but if i change this everything will break
