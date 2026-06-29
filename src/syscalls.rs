@@ -179,11 +179,15 @@ pub enum SyscallTable {
     ///
     /// Privileges are required to use this syscall.
     SysClockSetTime = 52,
+    /// Perform privileged arch-specific operations.
+    ///
+    /// SysACtrl [crate::arch::ArchOp], arg: u64 => ()
+    SysACtrl = 53,
 }
 
 // sadly we cannot use any proc macros here because this crate is used by the libstd port and more, they don't happen to like proc macros...
 /// When a new syscall is added, add to this number, and use the old value as the syscall number
-const NEXT_SYSCALL_NUM: u16 = 53;
+const NEXT_SYSCALL_NUM: u16 = 54;
 
 impl TryFrom<u16> for SyscallTable {
     type Error = ();
